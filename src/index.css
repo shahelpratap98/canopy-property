@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Dirtyline';
+  src: url('https://fonts.cdnfonts.com/s/15011/Dirtyline36DaysofType.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: #fafaf7;
+  color: #14261b;
+  font-family: 'Barlow', system-ui, sans-serif;
+}
+
+/* Liquid glass — used on the nav pill, header CTA and the hero quote card. */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Gradient scrim over the hero video.
+   Deliberately NOT backdrop-filter: a full-viewport blur recomputed every video
+   frame caused real desktop jank on a previous build. A plain gradient is free. */
+.hero-scrim {
+  background: linear-gradient(
+      100deg,
+      rgba(6, 20, 12, 0.92) 0%,
+      rgba(6, 20, 12, 0.76) 42%,
+      rgba(6, 20, 12, 0.34) 72%,
+      rgba(6, 20, 12, 0.12) 100%
+    ),
+    linear-gradient(to top, rgba(6, 20, 12, 0.8) 0%, rgba(6, 20, 12, 0) 48%);
+}
+
+/* Focus ring: canopy-mid reads on paper; the hero overrides to canopy-light,
+   which would fail contrast on a light background. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2.5px solid #1e5631;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.on-dark :where(a, button, input, select, textarea):focus-visible {
+  outline-color: #8fd07a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
