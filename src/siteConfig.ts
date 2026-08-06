@@ -21,7 +21,7 @@ export const SITE = {
    * Leave blank and every WhatsApp entry point disappears rather than
    * rendering a broken link.
    */
-  whatsapp: '',
+  whatsapp: '64212698124', // +64 21 269 8124
 
   trust: [
     'Free quotes',
