@@ -12,8 +12,8 @@ export const SITE = {
   // TODO(owner): replace before launch.
   url: 'https://canopypropertyservices.co.nz',
   email: 'hello@canopypropertyservices.co.nz',
-  phone: '',            // e.g. '021 123 4567'
-  phoneHref: '',        // e.g. 'tel:+6421123456'
+  phone: '021 269 8124',            // display form
+  phoneHref: 'tel:+64212698124',    // E.164 for the tel: link and JSON-LD
 
   /**
    * WhatsApp number in FULL INTERNATIONAL FORM, digits only — no +, spaces,
@@ -22,6 +22,14 @@ export const SITE = {
    * rendering a broken link.
    */
   whatsapp: '64212698124', // +64 21 269 8124
+
+  /** Visible opening hours. Kept in sync with the openingHoursSpecification
+   *  in seo.ts — structured data must reflect what is on the page. */
+  hours: 'Monday to Friday, 8am to 5pm',
+  hoursSchema: { opens: '08:00', closes: '17:00', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
+
+  /** 1200x630, generated from the hero master by scripts/. */
+  ogImage: '/og-image.jpg',
 
   trust: [
     'Free quotes',

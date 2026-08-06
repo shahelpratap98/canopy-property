@@ -36,7 +36,17 @@ for (const route of ROUTES) {
     `<meta property="og:description" content="${escape(meta.description)}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:url" content="${SITE_URL}${route.path}" />`,
+    // twitter:card promises a large image, so one must actually exist.
+    `<meta property="og:image" content="${SITE_URL}/og-image.jpg" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:image:alt" content="${escape(
+      'Aerial view of immaculately maintained apartment grounds in Auckland, with striped lawn and clipped hedges'
+    )}" />`,
+    `<meta property="og:site_name" content="Canopy Property Services" />`,
+    `<meta property="og:locale" content="en_NZ" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:image" content="${SITE_URL}/og-image.jpg" />`,
     ...schemasFor(route.path).map(
       (schema) => `<script type="application/ld+json">${JSON.stringify(schema)}</script>`
     ),
@@ -61,8 +71,11 @@ for (const route of ROUTES) {
   written++;
 }
 
+const lastmod = new Date().toISOString().slice(0, 10);
 const urls = ROUTES.map(
-  (r) => `  <url><loc>${SITE_URL}${r.path}</loc><priority>${r.priority.toFixed(1)}</priority></url>`
+  (r) =>
+    `  <url><loc>${SITE_URL}${r.path}</loc><lastmod>${lastmod}</lastmod>` +
+    `<priority>${r.priority.toFixed(1)}</priority></url>`
 ).join('\n');
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

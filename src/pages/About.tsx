@@ -88,6 +88,53 @@ export default function About() {
               We also take one-off jobs: a section that has got away over a wet spring, a pre-sale
               tidy-up on a deadline, or a garden that needs rebuilding rather than maintaining.
             </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
+              Because we cover lawns, gardens, outdoor cleaning and landscaping under one roof, a
+              property does not need three different contractors and three different schedules. The
+              same team that mows the lawn can clear the gutters before winter, wash the paths when
+              they turn slippery, and rebuild a tired bed in spring.
+            </p>
+          </div>
+
+          <div className="mt-12 max-w-[68ch]">
+            <h2 className="font-display text-[24px] font-normal tracking-tight text-ink">
+              Who we work for
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
+              Homeowners who would rather spend the weekend elsewhere. Landlords and property
+              managers who need the grounds to pass an inspection without chasing anyone. Body
+              corporates where shared grounds need one contractor holding one standard rather than a
+              rotating cast. Schools, offices and retail frontages where the first thing anyone sees
+              is the outside.
+            </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
+              Being police checked matters more on some of those sites than others, but we hold the
+              same standard everywhere: school grounds, tenanted rentals and occupied homes all get
+              the same team and the same care.
+            </p>
+          </div>
+
+          <div className="mt-12 max-w-[68ch]">
+            <h2 className="font-display text-[24px] font-normal tracking-tight text-ink">
+              Working with the Auckland seasons
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
+              Auckland's warm, wet climate is the reason grounds here need a rhythm rather than an
+              annual tidy. Growth runs away through spring and summer, so mowing and edging move to
+              a tighter cycle. Autumn is for pruning, feeding and getting gutters clear before the
+              rain. Winter is when moss and mould take hold on paths, decks and cladding, which is
+              when soft washing earns its place.
+            </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
+              We plan the year around that rather than treating every visit the same, which is what
+              keeps a property looking maintained instead of merely cut.
+            </p>
+          </div>
+
+          <div className="mt-12 max-w-[68ch]">
+            <p className="text-[15px] leading-relaxed text-ink-soft">
+              We are open {SITE.hours.toLowerCase()}, and quotes are always free.
+            </p>
           </div>
         </div>
       </div>
