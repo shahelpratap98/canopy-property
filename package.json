@@ -9,7 +9,8 @@
     "build:client": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "compress:video": "node scripts/compress-video.mjs"
+    "compress:video": "node scripts/compress-video.mjs",
+    "optimize:photos": "node scripts/optimize-photos.mjs"
   },
   "dependencies": {
     "gsap": "^3.13.0",

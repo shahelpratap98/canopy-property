@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import VideoBackground from '../components/VideoBackground';
 import { SITE } from '../siteConfig';
@@ -131,9 +132,85 @@ export default function About() {
             </p>
           </div>
 
+          <section className="mt-16" aria-labelledby="health-safety">
+            <h2
+              id="health-safety"
+              className="font-display text-[24px] font-normal tracking-tight text-ink"
+            >
+              Health and safety
+            </h2>
+            <p className="mt-4 max-w-[68ch] text-[15px] leading-relaxed text-ink-soft">
+              We work on occupied homes, tenanted rentals, school grounds and shared body corporate
+              spaces, often while people are coming and going around us. That means safety is two
+              jobs at once: keeping the people who live and work at a property safe while we are
+              there, and keeping our own team safe doing the work.
+            </p>
+
+            <div className="mt-8 grid gap-5 md:grid-cols-2">
+              <div className="rounded-2xl border border-line bg-white p-6">
+                <h3 className="text-[17px] font-semibold tracking-tight text-ink">
+                  Keeping you and your property safe
+                </h3>
+                <ul className="mt-4 space-y-2.5">
+                  {[
+                    'We check the site before we start and work around people, pets and access',
+                    'Gates are checked on arrival and closed again before we leave',
+                    'Leads, hoses and equipment are kept clear of paths, drives and doorways',
+                    'Nothing sharp, powered or chemical is left unattended or within reach',
+                    'We let you know before any spray work so you can plan around it',
+                    'Cuttings and debris are cleared so the site is left safe to walk on',
+                  ].map((item) => (
+                    <li key={item} className="flex gap-2.5 text-[14px] leading-relaxed text-ink-soft">
+                      <Check
+                        size={16}
+                        strokeWidth={1.75}
+                        className="mt-0.5 shrink-0 text-canopy-mid"
+                        aria-hidden="true"
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-line bg-white p-6">
+                <h3 className="text-[17px] font-semibold tracking-tight text-ink">
+                  Keeping our team safe on site
+                </h3>
+                <ul className="mt-4 space-y-2.5">
+                  {[
+                    'Hazards are identified on arrival at each site, not assumed from the last one',
+                    'The right protective equipment for the task, including eye and hearing protection',
+                    'Mowers, trimmers and blowers are maintained and used as intended',
+                    'Safe working practices at height for gutter and pruning work',
+                    'Chemicals are stored, handled and applied to label instructions',
+                    'Nobody works alone on a job where that would not be safe',
+                  ].map((item) => (
+                    <li key={item} className="flex gap-2.5 text-[14px] leading-relaxed text-ink-soft">
+                      <Check
+                        size={16}
+                        strokeWidth={1.75}
+                        className="mt-0.5 shrink-0 text-canopy-mid"
+                        aria-hidden="true"
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <p className="mt-6 max-w-[68ch] text-[15px] leading-relaxed text-ink-soft">
+              Our team is fully insured and police checked, and we are happy to talk through how we
+              will work on your site before we start. For schools, body corporates and commercial
+              properties that is usually part of the conversation anyway, and we would rather have
+              it up front.
+            </p>
+          </section>
+
           <div className="mt-12 max-w-[68ch]">
             <p className="text-[15px] leading-relaxed text-ink-soft">
-              We are open {SITE.hours.toLowerCase()}, and quotes are always free.
+              We are {SITE.hours.toLowerCase()}, and quotes are always free.
             </p>
           </div>
         </div>

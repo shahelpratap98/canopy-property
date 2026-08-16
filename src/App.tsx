@@ -3,10 +3,12 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import WhatsAppFab from './components/WhatsAppButton';
+import CallButton from './components/CallButton';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import CategoryPage from './pages/CategoryPage';
 import ServicePage from './pages/ServicePage';
+import Projects from './pages/Projects';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import { metaFor } from './seo';
@@ -48,6 +50,7 @@ export default function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/services/:categorySlug" element={<CategoryPage />} />
           <Route path="/services/:categorySlug/:serviceSlug" element={<ServicePage />} />
+          <Route path="/projects" element={<Projects />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<Home />} />
@@ -56,6 +59,7 @@ export default function App() {
 
       <Footer />
       <WhatsAppFab />
+      <CallButton />
     </div>
   );
 }

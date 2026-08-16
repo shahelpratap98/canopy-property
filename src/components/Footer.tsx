@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../data/services';
 import { WhatsAppInline } from './WhatsAppButton';
-import { NAV, SITE } from '../siteConfig';
+import { NAV, SITE, activeContacts } from '../siteConfig';
 
 export default function Footer() {
   return (
@@ -16,9 +16,22 @@ export default function Footer() {
             {SITE.tagline} across {SITE.region}. Residential and commercial. Fully insured, police
             checked, and committed to quality workmanship.
           </p>
-          <div className="mt-3">
-            <WhatsAppInline className="text-[14px] text-white/75 hover:text-white" />
-          </div>
+          <ul className="mt-3 space-y-0.5">
+            {activeContacts().map((contact) => (
+              <li key={contact.phoneHref}>
+                <a
+                  className="inline-flex min-h-[44px] items-center text-[14px] text-white/75 hover:text-white"
+                  href={contact.phoneHref}
+                >
+                  {contact.phone}
+                  {contact.name && <span className="text-white/50">&nbsp;— {contact.name}</span>}
+                </a>
+              </li>
+            ))}
+            <li>
+              <WhatsAppInline className="text-[14px] text-white/75 hover:text-white" />
+            </li>
+          </ul>
         </div>
 
         <div>

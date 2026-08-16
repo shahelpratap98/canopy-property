@@ -1,5 +1,6 @@
 import { CATEGORIES } from './data/services';
-import { SITE } from './siteConfig';
+import { hasProjects } from './data/projects';
+import { SITE, activeContacts, e164 } from './siteConfig';
 
 export type RouteMeta = {
   path: string;
@@ -28,6 +29,19 @@ export const ROUTES: RouteMeta[] = [
       'Lawn and garden maintenance, property maintenance, outdoor cleaning, landscaping and commercial grounds contracts across Auckland. Free quotes.',
     priority: 0.9,
   },
+  // Only listed once real projects exist — an empty gallery is thin content and
+  // should not be in the sitemap.
+  ...(hasProjects()
+    ? [
+        {
+          path: '/projects',
+          title: `Our Projects: Landscaping & Grounds Work${suffix}`,
+          description:
+            'Recent landscaping, garden and grounds maintenance projects completed across Auckland by Canopy Property Services. Free quotes.',
+          priority: 0.7,
+        },
+      ]
+    : []),
   {
     path: '/about',
     title: `About Us: Auckland Grounds Maintenance${suffix}`,
@@ -84,9 +98,21 @@ export function schemasFor(path: string): object[] {
     ],
   };
   if (SITE.email) business.email = SITE.email;
-  // E.164 (from phoneHref), not the local display form — schema.org consumers
-  // expect an internationally dialable number.
-  if (SITE.phoneHref) business.telephone = SITE.phoneHref.replace(/^tel:/, '');
+  // E.164, not the local display form — schema.org consumers expect an
+  // internationally dialable number. Blank contacts are filtered out rather
+  // than emitting placeholders into structured data.
+  const contacts = activeContacts();
+  if (contacts.length) {
+    business.telephone = e164(contacts[0]);
+    business.contactPoint = contacts.map((c) => ({
+      '@type': 'ContactPoint',
+      name: c.name,
+      telephone: e164(c),
+      contactType: 'customer service',
+      areaServed: 'NZ',
+      availableLanguage: 'English',
+    }));
+  }
 
   const schemas: object[] = [business];
 

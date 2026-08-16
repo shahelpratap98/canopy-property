@@ -1,8 +1,9 @@
 import { Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 import QuoteForm from '../components/QuoteForm';
 import { WhatsAppInline } from '../components/WhatsAppButton';
-import { SITE } from '../siteConfig';
+import { SITE, activeContacts } from '../siteConfig';
 
 const STEPS = [
   {
@@ -44,14 +45,23 @@ export default function Contact() {
                   </a>
                 </li>
               )}
-              {SITE.phone && (
-                <li className="flex items-center gap-3">
+              {activeContacts().map((contact) => (
+                <li key={contact.phoneHref} className="flex items-center gap-3">
                   <Phone size={17} strokeWidth={1.5} className="text-canopy-mid" aria-hidden="true" />
-                  <a className="text-[15px] text-ink hover:text-canopy-deep hover:underline" href={SITE.phoneHref}>
-                    {SITE.phone}
-                  </a>
+                  <span className="text-[15px] text-ink">
+                    <a className="font-medium hover:text-canopy-deep hover:underline" href={contact.phoneHref}>
+                      {contact.phone}
+                    </a>
+                    {contact.name && (
+                      <span className="text-ink-soft">
+                        {' '}
+                        — {contact.name}
+                        {contact.role ? ` (${contact.role.toLowerCase()})` : ''}
+                      </span>
+                    )}
+                  </span>
                 </li>
-              )}
+              ))}
               <li className="flex items-center gap-3 text-canopy-mid">
                 <WhatsAppInline className="text-ink hover:text-canopy-deep hover:underline" />
               </li>
@@ -108,10 +118,16 @@ export default function Contact() {
                 further than we would for a one-off.
               </p>
               <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-soft">
-                Quotes are free and carry no obligation. We are fully insured and police checked,
-                which matters on school grounds, tenanted rentals and occupied homes. Our office
-                hours are {SITE.hours.toLowerCase()}, and we answer WhatsApp messages outside those
-                hours where we can.
+                Quotes are free and carry no obligation. We are {SITE.hours.toLowerCase()}, so you
+                can reach either of us most of the day, seven days a week.
+              </p>
+              <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-soft">
+                We are fully insured, police checked and health and safety compliant, which matters
+                on school grounds, tenanted rentals and occupied homes.{' '}
+                <Link className="text-canopy-mid hover:text-canopy-deep hover:underline" to="/about#health-safety">
+                  How we keep sites safe
+                </Link>
+                .
               </p>
             </section>
           </div>
