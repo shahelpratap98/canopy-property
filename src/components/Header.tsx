@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import Logo from './Logo';
 import { NAV, SITE } from '../siteConfig';
 
 /**
@@ -46,8 +47,6 @@ export default function Header() {
     // value silently generates no rule at all — leaving the header transparent.
     : 'bg-paper/95 backdrop-blur-sm border-b border-line';
 
-  const wordmark = onDark ? 'text-white' : 'text-ink';
-  const accent = onDark ? 'text-canopy-light' : 'text-canopy-mid';
 
   const linkClass = ({ isActive }: { isActive: boolean }) => {
     // min-h-[44px]: 11px text alone gives a ~37px target, under the 44px minimum.
@@ -77,10 +76,10 @@ export default function Header() {
     >
       <NavLink
         to="/"
-        className={`inline-flex min-h-[44px] items-center text-[17px] font-semibold tracking-tight ${wordmark}`}
+        className="inline-flex min-h-[44px] items-center"
         aria-label={`${SITE.name} home`}
       >
-        Canopy<span className={accent}>&nbsp;Property</span>
+        <Logo dark={onDark} />
       </NavLink>
 
       <nav

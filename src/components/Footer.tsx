@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 import { CATEGORIES } from '../data/services';
 import { WhatsAppInline } from './WhatsAppButton';
 import { NAV, SITE, activeContacts } from '../siteConfig';
@@ -9,9 +10,7 @@ export default function Footer() {
     <footer className="on-dark bg-canopy-deep text-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="text-[17px] font-semibold tracking-tight text-white">
-            Canopy<span className="text-canopy-light"> Property</span>
-          </p>
+          <Logo dark className="h-10 w-auto" />
           <p className="mt-3 max-w-[280px] text-[14px] leading-relaxed text-white/65">
             {SITE.tagline} across {SITE.region}. Residential and commercial. Fully insured, police
             checked, and committed to quality workmanship.

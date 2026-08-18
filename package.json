@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "compress:video": "node scripts/compress-video.mjs",
-    "optimize:photos": "node scripts/optimize-photos.mjs"
+    "optimize:photos": "node scripts/optimize-photos.mjs",
+    "build:logo": "node scripts/build-logo.mjs"
   },
   "dependencies": {
     "gsap": "^3.13.0",
