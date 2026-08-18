@@ -43,6 +43,10 @@ export default function QuoteForm({
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Partial<Record<keyof Fields, boolean>>>({});
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [sentVia, setSentVia] = useState<'api' | 'mailto'>('api');
+  // Honeypot. Bots fill hidden fields; humans never see this one.
+  const [website, setWebsite] = useState('');
 
   const dark = variant === 'glass';
 
@@ -76,29 +80,57 @@ export default function QuoteForm({
     }
 
     setStatus('sending');
+    setSendError(null);
 
-    // NOTE: there is no backend yet. This composes an email in the visitor's mail
-    // client. Swap for a real endpoint (Formspree, Resend, a serverless function)
-    // before launch — see README.
-    const body = [
-      `Name: ${values.name}`,
-      `Contact: ${values.contact}`,
-      `Suburb: ${values.suburb}`,
-      `Service: ${values.service}`,
-      '',
-      values.notes || '(no extra detail supplied)',
-    ].join('\n');
+    // Composes the same enquiry as a mailto: used only when the API is not
+    // configured or unreachable, so an enquiry is never silently dropped.
+    const mailtoFallback = () => {
+      const body = [
+        `Name: ${values.name}`,
+        `Contact: ${values.contact}`,
+        `Suburb: ${values.suburb}`,
+        `Service: ${values.service}`,
+        '',
+        values.notes || '(no extra detail supplied)',
+      ].join('\n');
+      window.location.href =
+        `mailto:${SITE.email}?subject=${encodeURIComponent(`Quote request — ${values.service}`)}` +
+        `&body=${encodeURIComponent(body)}`;
+      setSentVia('mailto');
+      setStatus('sent');
+    };
 
-    window.location.href =
-      `mailto:${SITE.email}?subject=${encodeURIComponent(`Quote request — ${values.service}`)}` +
-      `&body=${encodeURIComponent(body)}`;
+    void (async () => {
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...values, website }),
+        });
 
-    window.setTimeout(() => setStatus('sent'), 600);
+        if (res.ok) {
+          setSentVia('api');
+          setStatus('sent');
+          return;
+        }
+
+        const data = await res.json().catch(() => ({}));
+        if (data?.fallback) {
+          mailtoFallback();
+          return;
+        }
+        setSendError(data?.error ?? 'We could not send that just now. Please try again.');
+        setStatus('idle');
+      } catch {
+        // Offline or the function is missing entirely.
+        mailtoFallback();
+      }
+    })();
   };
 
   const shell = dark
-    ? 'liquid-glass on-dark rounded-2xl p-5 sm:p-6'
-    : 'rounded-2xl border border-line bg-white p-5 shadow-[0_18px_40px_-28px_rgba(18,60,34,0.35)] sm:p-6';
+    ? 'liquid-glass on-dark relative rounded-2xl p-5 sm:p-6'
+    : 'relative rounded-2xl border border-line bg-white p-5 shadow-[0_18px_40px_-28px_rgba(18,60,34,0.35)] sm:p-6';
 
   const heading = dark ? 'text-white' : 'text-ink';
   const sub = dark ? 'text-white/55' : 'text-ink-soft';
@@ -128,13 +160,21 @@ export default function QuoteForm({
         >
           <Check size={20} strokeWidth={1.5} className={dark ? 'text-canopy-light' : 'text-canopy-mid'} />
         </div>
-        <p className={`text-[15px] font-medium ${heading}`}>Your quote request is ready to send.</p>
+        <p className={`text-[15px] font-medium ${heading}`}>
+          {sentVia === 'api' ? 'Thanks — your request is on its way.' : 'Your quote request is ready to send.'}
+        </p>
         <p className={`mt-1.5 text-[13px] leading-relaxed ${sub}`}>
-          We have opened an email for you to send. If nothing appeared, email us directly at{' '}
-          <a className="underline underline-offset-2" href={`mailto:${SITE.email}`}>
-            {SITE.email}
-          </a>
-          .
+          {sentVia === 'api'
+            ? 'We will get back to you shortly. If it is urgent, give us a call.'
+            : 'We have opened an email for you to send. If nothing appeared, email us directly at '}
+          {sentVia === 'mailto' && (
+            <>
+              <a className="underline underline-offset-2" href={`mailto:${SITE.email}`}>
+                {SITE.email}
+              </a>
+              .
+            </>
+          )}
         </p>
         <button
           type="button"
@@ -142,6 +182,7 @@ export default function QuoteForm({
             setValues(EMPTY);
             setTouched({});
             setErrors({});
+            setSendError(null);
             setStatus('idle');
           }}
           className={`mt-4 min-h-[44px] rounded-full px-6 text-[14px] font-medium transition-transform hover:scale-[1.03] active:scale-[0.97] ${submit}`}
@@ -287,6 +328,27 @@ export default function QuoteForm({
           className={`${field} resize-y`}
         />
       </div>
+
+      {/* Honeypot: visually hidden, off the tab order, ignored by humans. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+        <label htmlFor={`${uid}-website`}>Leave this field empty</label>
+        <input
+          id={`${uid}-website`}
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
+
+      {sendError && (
+        <p role="alert" className={`mt-4 rounded-xl px-4 py-3 text-[13px] ${dark ? 'bg-red-500/15 text-red-200' : 'bg-red-50 text-red-800'}`}>
+          {sendError}{' '}
+          <a className="underline" href={`mailto:${SITE.email}`}>Email us instead</a>.
+        </p>
+      )}
 
       <button
         type="submit"
