@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="on-dark bg-canopy-deep text-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <Logo dark className="h-10 w-auto" />
+          <Logo dark className="h-12 w-auto md:h-10" />
           <p className="mt-3 max-w-[280px] text-[14px] leading-relaxed text-white/65">
             {SITE.tagline} across {SITE.region}. Residential and commercial. Fully insured, police
             checked, and committed to quality workmanship.

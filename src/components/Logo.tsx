@@ -13,7 +13,7 @@ import { SITE } from '../siteConfig';
  */
 export default function Logo({
   dark = false,
-  className = 'h-9 w-auto md:h-10',
+  className = 'h-11 w-auto md:h-10',
 }: {
   dark?: boolean;
   className?: string;
