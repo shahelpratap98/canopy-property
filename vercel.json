@@ -1,11 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/canopy-hero.mp4",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/(hero-grounds|hero-canopy-rise).mp4",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(logo|logo-white).png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
-  ]
+  ],
+  "//": "cleanUrls is deliberately NOT set: routes are directory-based (about/index.html) which Vercel resolves anyway, and cleanUrls 308s /google...html to the extensionless path, which can fail Search Console file verification."
 }
