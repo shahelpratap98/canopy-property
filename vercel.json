@@ -20,6 +20,5 @@
         }
       ]
     }
-  ],
-  "//": "cleanUrls is deliberately NOT set: routes are directory-based (about/index.html) which Vercel resolves anyway, and cleanUrls 308s /google...html to the extensionless path, which can fail Search Console file verification."
+  ]
 }

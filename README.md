@@ -30,6 +30,18 @@ Every service has its own URL: `/services/<category>/<service>`. This is the
 point of the prerender step — a client-rendered SPA ships an empty `<div id="root">`,
 so all 38 service pages would look identical and empty to a crawler.
 
+## Deployment notes
+
+ deliberately does **not** set . It 308s
+ to the extensionless path, and Google fetches that exact
+filename when verifying Search Console. The prerendered routes are
+directory-based (), which Vercel resolves either way, so
+ bought nothing and broke verification.
+
+Do not add comment keys to . Vercel validates it against a
+schema that rejects unknown properties, including a  key — the build
+fails outright rather than ignoring it.
+
 ## Video pipeline
 
 Full-size masters live in `video-src/` and **are tracked** (~30 MB), so they
