@@ -32,15 +32,16 @@ so all 38 service pages would look identical and empty to a crawler.
 
 ## Deployment notes
 
- deliberately does **not** set . It 308s
- to the extensionless path, and Google fetches that exact
+`vercel.json` deliberately does **not** set `cleanUrls`. It 308s
+`/google<token>.html` to the extensionless path, and Google fetches that exact
 filename when verifying Search Console. The prerendered routes are
-directory-based (), which Vercel resolves either way, so
- bought nothing and broke verification.
+directory-based (`about/index.html`), which Vercel resolves either way, so
+`cleanUrls` bought nothing and broke verification.
 
-Do not add comment keys to . Vercel validates it against a
-schema that rejects unknown properties, including a  key — the build
-fails outright rather than ignoring it.
+**Do not add comment keys to `vercel.json`.** Vercel validates it against a
+schema that rejects unknown properties, including a `"//"` key. The build fails
+outright rather than ignoring it, and the previous deployment stays live — so
+the symptom looks like "my change did nothing" rather than an obvious error.
 
 ## Video pipeline
 
