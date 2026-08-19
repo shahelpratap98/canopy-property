@@ -9,6 +9,55 @@ const escapeHtml = (value = '') =>
 
 const looksLikeEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v ?? '').trim());
 
+/**
+ * Rate limiting.
+ *
+ * Two windows: one per IP to stop a single source hammering the form, and one
+ * global to protect the Resend quota. The free plan allows 100 emails a day, so
+ * an unthrottled flood would not just fill the inbox, it would exhaust the
+ * allowance and block genuine enquiries for the rest of the day.
+ *
+ * CAVEAT: this state is per warm function instance. Vercel scales out and
+ * recycles instances, so the effective ceiling is higher than the numbers below
+ * and resets on a cold start. It stops naive floods, not a determined
+ * distributed attacker. If this ever proves insufficient, the upgrade is a
+ * shared store (Upstash Redis via the Vercel marketplace) or Vercel's WAF —
+ * both need no change to the rest of this handler.
+ */
+const LIMITS = {
+  perIp: { max: 5, windowMs: 10 * 60 * 1000 },
+  global: { max: 30, windowMs: 60 * 60 * 1000 },
+};
+const MAX_TRACKED_KEYS = 5000;
+const hits = new Map();
+
+function take(key, { max, windowMs }) {
+  const now = Date.now();
+  const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
+
+  if (recent.length >= max) {
+    hits.set(key, recent);
+    return { ok: false, retryAfter: Math.ceil((windowMs - (now - recent[0])) / 1000) };
+  }
+
+  recent.push(now);
+  hits.set(key, recent);
+
+  // Bound memory: drop the oldest keys rather than growing without limit.
+  if (hits.size > MAX_TRACKED_KEYS) {
+    for (const k of hits.keys()) {
+      hits.delete(k);
+      if (hits.size <= MAX_TRACKED_KEYS * 0.9) break;
+    }
+  }
+  return { ok: true };
+}
+
+const clientIp = (req) =>
+  String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim() ||
+  req.socket?.remoteAddress ||
+  'unknown';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -27,6 +76,30 @@ export default async function handler(req, res) {
     });
   }
 
+  const { name, contact, suburb, service, notes, website } = req.body ?? {};
+
+  // Honeypot first: a filled hidden field means a bot. Return 200 so it does not
+  // retry, and do it before rate limiting so bots never consume the budget.
+  if (website) return res.status(200).json({ ok: true });
+
+  // Before validation on purpose, so malformed floods are throttled too.
+  const ipCheck = take(`ip:${clientIp(req)}`, LIMITS.perIp);
+  if (!ipCheck.ok) {
+    res.setHeader('Retry-After', String(ipCheck.retryAfter));
+    return res.status(429).json({
+      error: 'That is a few requests in a short time. Please wait a moment, or call us instead.',
+    });
+  }
+
+  const globalCheck = take('global', LIMITS.global);
+  if (!globalCheck.ok) {
+    console.warn('Global quote-form rate limit reached.');
+    res.setHeader('Retry-After', String(globalCheck.retryAfter));
+    return res.status(429).json({
+      error: 'We are getting a lot of requests right now. Please call us or try again shortly.',
+    });
+  }
+
   // CONTACT_TO_EMAIL may hold several addresses, comma separated, so quote
   // requests can reach more than one person without a code change.
   const recipients = CONTACT_TO_EMAIL.split(',')
@@ -37,11 +110,6 @@ export default async function handler(req, res) {
     console.error('CONTACT_TO_EMAIL is set but contains no usable address.');
     return res.status(503).json({ error: 'The quote form is not connected yet.', fallback: true });
   }
-
-  const { name, contact, suburb, service, notes, website } = req.body ?? {};
-
-  // Honeypot: a filled hidden field means a bot. Return 200 so it does not retry.
-  if (website) return res.status(200).json({ ok: true });
 
   if (!name || !contact || !suburb || !service) {
     return res.status(400).json({ error: 'Please fill in every required field.' });
