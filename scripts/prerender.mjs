@@ -13,7 +13,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 
 // pathToFileURL: Windows ESM refuses a bare "C:\..." specifier.
-const { render, ROUTES, metaFor, schemasFor } = await import(
+const { render, ROUTES, metaFor, schemasFor, SITE_URL } = await import(
   pathToFileURL(path.join(root, '.ssr', 'entry-server.js')).href
 );
 
@@ -22,7 +22,6 @@ const template = await fs.readFile(path.join(dist, 'index.html'), 'utf-8');
 const escape = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const SITE_URL = 'https://canopypropertyservices.co.nz';
 
 let written = 0;
 

@@ -10,6 +10,11 @@ export type RouteMeta = {
   priority: number;
 };
 
+/** The canonical origin. Everything that builds absolute URLs must use this
+ *  rather than restating the host — prerender.mjs previously kept its own copy
+ *  and drifted out of sync when the domain went live on www. */
+export const SITE_URL = SITE.url;
+
 /** Short on purpose. The full company name costs 26 characters of a ~60
  *  character SERP budget, which pushed 19 of 47 titles into truncation. */
 const suffix = ` | ${SITE.shortName}`;

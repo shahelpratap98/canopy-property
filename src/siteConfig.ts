@@ -23,8 +23,7 @@ export const SITE = {
   region: 'Auckland',
   country: 'New Zealand',
 
-  // TODO(owner): replace before launch.
-  url: 'https://canopypropertyservices.co.nz',
+  url: 'https://www.canopypropertyservices.co.nz', // Vercel 308s the apex to www; canonicals must match the served host
 
   email: 'hello@canopypropertyservices.co.nz',
 
