@@ -27,6 +27,17 @@ export default async function handler(req, res) {
     });
   }
 
+  // CONTACT_TO_EMAIL may hold several addresses, comma separated, so quote
+  // requests can reach more than one person without a code change.
+  const recipients = CONTACT_TO_EMAIL.split(',')
+    .map((address) => address.trim())
+    .filter(Boolean);
+
+  if (recipients.length === 0) {
+    console.error('CONTACT_TO_EMAIL is set but contains no usable address.');
+    return res.status(503).json({ error: 'The quote form is not connected yet.', fallback: true });
+  }
+
   const { name, contact, suburb, service, notes, website } = req.body ?? {};
 
   // Honeypot: a filled hidden field means a bot. Return 200 so it does not retry.
@@ -48,7 +59,7 @@ export default async function handler(req, res) {
 
     const { error } = await resend.emails.send({
       from: CONTACT_FROM_EMAIL,
-      to: CONTACT_TO_EMAIL,
+      to: recipients,
       // Only a real address can be replied to; the field also accepts a phone number.
       ...(looksLikeEmail(contact) ? { replyTo: String(contact).trim() } : {}),
       subject: `Quote request — ${service} (${suburb})`,
