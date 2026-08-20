@@ -56,6 +56,23 @@ export const SITE = {
   /** 1200x630, generated from the hero master by scripts/. */
   ogImage: '/og-image.jpg',
 
+  /**
+   * Must match the Google Business listing character for character. NAP
+   * consistency (name, address, phone) between the site and the listing is a
+   * direct local ranking signal, so do not reformat this for looks.
+   */
+  address: {
+    street: '100 Pukekohe East Road',
+    locality: 'Pukekohe',
+    postcode: '2677',
+    region: 'Auckland',
+    country: 'New Zealand',
+    countryCode: 'NZ',
+  },
+
+  /** The Google Business listing, for attribution links on the reviews section. */
+  googleReviewsUrl: 'https://www.google.com/maps?cid=18443405004966345243',
+
   trust: [
     'Free quotes',
     'Open 7 days',

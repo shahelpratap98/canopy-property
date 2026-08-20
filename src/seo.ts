@@ -92,7 +92,15 @@ export function schemasFor(path: string): object[] {
     url: SITE.url,
     image: `${SITE.url}${SITE.ogImage}`,
     areaServed: { '@type': 'City', name: 'Auckland', addressCountry: 'NZ' },
-    address: { '@type': 'PostalAddress', addressLocality: 'Auckland', addressCountry: 'NZ' },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: SITE.address.street,
+      addressLocality: SITE.address.locality,
+      postalCode: SITE.address.postcode,
+      addressRegion: SITE.address.region,
+      addressCountry: SITE.address.countryCode,
+    },
+    hasMap: SITE.googleReviewsUrl,
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',

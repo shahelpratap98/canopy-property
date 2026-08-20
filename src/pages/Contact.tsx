@@ -5,6 +5,11 @@ import QuoteForm from '../components/QuoteForm';
 import { WhatsAppInline } from '../components/WhatsAppButton';
 import { SITE, activeContacts } from '../siteConfig';
 
+/** Derived from the address so the pin and the printed address cannot disagree. */
+const MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(
+  [SITE.address.street, SITE.address.locality, SITE.address.postcode, SITE.address.country].join(', ')
+)}&z=14&output=embed`;
+
 const STEPS = [
   {
     title: 'You tell us the basics',
@@ -69,11 +74,21 @@ export default function Contact() {
                 <Clock size={17} strokeWidth={1.5} className="text-canopy-mid" aria-hidden="true" />
                 <span className="text-[15px] text-ink">{SITE.hours}</span>
               </li>
-              <li className="flex items-center gap-3">
-                <MapPin size={17} strokeWidth={1.5} className="text-canopy-mid" aria-hidden="true" />
-                <span className="text-[15px] text-ink">
-                  {SITE.region}, {SITE.country}
-                </span>
+              <li className="flex items-start gap-3">
+                <MapPin
+                  size={17}
+                  strokeWidth={1.5}
+                  className="mt-1 shrink-0 text-canopy-mid"
+                  aria-hidden="true"
+                />
+                {/* Formatted to match the Google listing exactly. */}
+                <address className="text-[15px] not-italic leading-relaxed text-ink">
+                  {SITE.address.street}
+                  <br />
+                  {SITE.address.locality} {SITE.address.postcode}
+                  <br />
+                  {SITE.address.region}, {SITE.address.country}
+                </address>
               </li>
             </ul>
 
@@ -129,6 +144,34 @@ export default function Contact() {
                 </Link>
                 .
               </p>
+            </section>
+
+            <section className="mt-12" aria-labelledby="find-us">
+              <h2
+                id="find-us"
+                className="font-display text-[22px] font-normal tracking-tight text-ink"
+              >
+                Find us
+              </h2>
+              <div className="mt-5 overflow-hidden rounded-2xl border border-line bg-paper-sunk">
+                {/* Lazy-loaded: the map is below the fold and pulls in third-party
+                    resources, so it must not compete with the first paint. */}
+                <iframe
+                  title={`Map showing ${SITE.name} at ${SITE.address.street}, ${SITE.address.locality}`}
+                  src={MAP_EMBED}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="block h-[320px] w-full border-0"
+                />
+              </div>
+              <a
+                href={SITE.googleReviewsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex min-h-[44px] items-center text-[14px] font-medium text-canopy-mid hover:text-canopy-deep hover:underline"
+              >
+                Open in Google Maps for directions →
+              </a>
             </section>
           </div>
 

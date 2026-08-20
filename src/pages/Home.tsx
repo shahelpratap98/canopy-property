@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
 import QuoteForm from '../components/QuoteForm';
+import Reviews from '../components/Reviews';
 import VideoBackground from '../components/VideoBackground';
 import { CATEGORIES } from '../data/services';
 import { SITE } from '../siteConfig';
@@ -115,6 +116,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Reviews />
     </>
   );
 }
