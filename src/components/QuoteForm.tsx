@@ -4,27 +4,42 @@ import { CATEGORIES } from '../data/services';
 import { SITE, whatsappUrl } from '../siteConfig';
 import { WhatsAppInline } from './WhatsAppButton';
 
-type Fields = { name: string; contact: string; suburb: string; service: string; notes: string };
+type Fields = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  service: string;
+  notes: string;
+};
 type Errors = Partial<Record<keyof Fields, string>>;
 
 /** 'glass' sits over the dark hero video; 'paper' sits on the light pages. */
 type Variant = 'glass' | 'paper';
 
-const EMPTY: Fields = { name: '', contact: '', suburb: '', service: '', notes: '' };
+const EMPTY: Fields = { name: '', email: '', phone: '', address: '', service: '', notes: '' };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^[\d\s()+-]{7,}$/;
 
 function validate(values: Fields): Errors {
   const errors: Errors = {};
   if (!values.name.trim()) errors.name = 'Please tell us your name.';
-  if (!values.contact.trim()) {
-    errors.contact = 'Add a phone number or email so we can send the quote.';
-  } else {
-    const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.contact.trim());
-    const looksLikePhone = /^[\d\s()+-]{7,}$/.test(values.contact.trim());
-    if (!looksLikeEmail && !looksLikePhone) {
-      errors.contact = 'That does not look like a phone number or email address.';
-    }
+  if (!values.email.trim()) {
+    errors.email = 'We need an email address to send the quote to.';
+  } else if (!EMAIL_RE.test(values.email.trim())) {
+    errors.email = 'That does not look like an email address.';
   }
-  if (!values.suburb.trim()) errors.suburb = 'Which Auckland suburb is the property in?';
+  if (!values.phone.trim()) {
+    errors.phone = 'Add a phone number so we can reach you.';
+  } else if (!PHONE_RE.test(values.phone.trim())) {
+    errors.phone = 'That does not look like a phone number.';
+  }
+  if (!values.address.trim()) {
+    errors.address = 'Which property is the work for?';
+  } else if (values.address.trim().length < 6) {
+    errors.address = 'Please give the street address, not just a suburb.';
+  }
   if (!values.service) errors.service = 'Choose the service you need.';
   return errors;
 }
@@ -69,7 +84,7 @@ export default function QuoteForm({
     e.preventDefault();
     const found = validate(values);
     setErrors(found);
-    setTouched({ name: true, contact: true, suburb: true, service: true });
+    setTouched({ name: true, email: true, phone: true, address: true, service: true });
 
     const firstInvalid = (Object.keys(found) as (keyof Fields)[])[0];
     if (firstInvalid) {
@@ -87,8 +102,9 @@ export default function QuoteForm({
     const mailtoFallback = () => {
       const body = [
         `Name: ${values.name}`,
-        `Contact: ${values.contact}`,
-        `Suburb: ${values.suburb}`,
+        `Email: ${values.email}`,
+        `Phone: ${values.phone}`,
+        `Property address: ${values.address}`,
         `Service: ${values.service}`,
         '',
         values.notes || '(no extra detail supplied)',
@@ -228,50 +244,77 @@ export default function QuoteForm({
         </div>
 
         <div>
-          <label className={label} htmlFor={`${uid}-contact`}>
-            PHONE OR EMAIL <span aria-hidden="true" className={star}>*</span>
+          <label className={label} htmlFor={`${uid}-email`}>
+            EMAIL <span aria-hidden="true" className={star}>*</span>
           </label>
           <input
-            id={`${uid}-contact`}
-            name="contact"
-            type="text"
+            id={`${uid}-email`}
+            name="email"
+            type="email"
             inputMode="email"
             autoComplete="email"
             required
-            value={values.contact}
-            onChange={set('contact')}
-            onBlur={blur('contact')}
-            aria-invalid={!!errors.contact}
-            aria-describedby={errors.contact ? `${uid}-contact-err` : undefined}
+            value={values.email}
+            onChange={set('email')}
+            onBlur={blur('email')}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? `${uid}-email-err` : undefined}
             className={field}
           />
-          {errors.contact && (
-            <p id={`${uid}-contact-err`} role="alert" className={errorClass}>
-              {errors.contact}
+          {errors.email && (
+            <p id={`${uid}-email-err`} role="alert" className={errorClass}>
+              {errors.email}
             </p>
           )}
         </div>
 
         <div>
-          <label className={label} htmlFor={`${uid}-suburb`}>
-            SUBURB <span aria-hidden="true" className={star}>*</span>
+          <label className={label} htmlFor={`${uid}-phone`}>
+            PHONE <span aria-hidden="true" className={star}>*</span>
           </label>
           <input
-            id={`${uid}-suburb`}
-            name="suburb"
-            type="text"
-            autoComplete="address-level2"
+            id={`${uid}-phone`}
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
             required
-            value={values.suburb}
-            onChange={set('suburb')}
-            onBlur={blur('suburb')}
-            aria-invalid={!!errors.suburb}
-            aria-describedby={errors.suburb ? `${uid}-suburb-err` : undefined}
+            value={values.phone}
+            onChange={set('phone')}
+            onBlur={blur('phone')}
+            aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? `${uid}-phone-err` : undefined}
             className={field}
           />
-          {errors.suburb && (
-            <p id={`${uid}-suburb-err`} role="alert" className={errorClass}>
-              {errors.suburb}
+          {errors.phone && (
+            <p id={`${uid}-phone-err`} role="alert" className={errorClass}>
+              {errors.phone}
+            </p>
+          )}
+        </div>
+
+        {/* Full width: a street address does not fit a half-column comfortably. */}
+        <div className="sm:col-span-2">
+          <label className={label} htmlFor={`${uid}-address`}>
+            PROPERTY ADDRESS <span aria-hidden="true" className={star}>*</span>
+          </label>
+          <input
+            id={`${uid}-address`}
+            name="address"
+            type="text"
+            autoComplete="street-address"
+            placeholder="Street address and suburb"
+            required
+            value={values.address}
+            onChange={set('address')}
+            onBlur={blur('address')}
+            aria-invalid={!!errors.address}
+            aria-describedby={errors.address ? `${uid}-address-err` : undefined}
+            className={field}
+          />
+          {errors.address && (
+            <p id={`${uid}-address-err`} role="alert" className={errorClass}>
+              {errors.address}
             </p>
           )}
         </div>

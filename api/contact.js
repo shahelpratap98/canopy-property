@@ -76,7 +76,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const { name, contact, suburb, service, notes, website } = req.body ?? {};
+  const { name, email, phone, address, service, notes, website } = req.body ?? {};
 
   // Honeypot first: a filled hidden field means a bot. Return 200 so it does not
   // retry, and do it before rate limiting so bots never consume the budget.
@@ -111,14 +111,15 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'The quote form is not connected yet.', fallback: true });
   }
 
-  if (!name || !contact || !suburb || !service) {
+  if (!name || !email || !phone || !address || !service) {
     return res.status(400).json({ error: 'Please fill in every required field.' });
   }
 
   const rows = [
     ['Name', name],
-    ['Phone or email', contact],
-    ['Suburb', suburb],
+    ['Email', email],
+    ['Phone', phone],
+    ['Property address', address],
     ['Service', service],
   ];
 
@@ -128,9 +129,10 @@ export default async function handler(req, res) {
     const { error } = await resend.emails.send({
       from: CONTACT_FROM_EMAIL,
       to: recipients,
-      // Only a real address can be replied to; the field also accepts a phone number.
-      ...(looksLikeEmail(contact) ? { replyTo: String(contact).trim() } : {}),
-      subject: `Quote request — ${service} (${suburb})`,
+      // Email is a required field now, so replyTo is always set — but still
+      // guarded: an invalid replyTo gets the whole message rejected.
+      ...(looksLikeEmail(email) ? { replyTo: String(email).trim() } : {}),
+      subject: `Quote request — ${service} (${address})`,
       html: `
         <h2 style="font-family:sans-serif">New quote request from the Canopy website</h2>
         <table style="font-family:sans-serif;border-collapse:collapse">

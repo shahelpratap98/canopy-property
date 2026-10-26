@@ -13,7 +13,7 @@ const MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(
 const STEPS = [
   {
     title: 'You tell us the basics',
-    body: 'The property, the suburb and roughly what needs doing. A photo helps if something is overgrown or you are not sure what to call it.',
+    body: 'Your name, email, phone and the property address, plus roughly what needs doing. A photo helps if something is overgrown or you are not sure what to call it.',
   },
   {
     title: 'We take a look',
